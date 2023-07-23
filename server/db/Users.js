@@ -75,4 +75,39 @@ Users.byToken = async (token) => {
     throw error;
   }
 };
+
+Users.authenticateForgetPassword = async ({
+  username,
+  firstname,
+  lastname,
+  email,
+}) => {
+  const user = await Users.findOne({
+    where: {
+      username: username,
+      firstname: firstname,
+      lastname: lastname,
+      email: email,
+    },
+  });
+
+  if (user) {
+    return jwt.sign({ id: user.id }, process.env.JWT, { expiresIn: '5m' });
+  } else {
+    return null;
+  }
+};
+
+Users.authenticateForgetPasswordByToken = async (token) => {
+  const payload = jwt.verify(token, process.env.JWT);
+  const user = Users.findByPk(payload.id);
+  if (user) {
+    return payload.id;
+  } else {
+    const error = Error('bad credentials');
+    error.status = 401;
+    throw error;
+  }
+};
+
 module.exports = Users;

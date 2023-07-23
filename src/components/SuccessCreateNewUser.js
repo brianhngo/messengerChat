@@ -15,11 +15,15 @@ export default function SuccessCreateNewUser() {
 
   return (
     <>
-      <h1> User Created!</h1>
-      <Link to="/" className="link">
-        {' '}
-        Back to Login{' '}
-      </Link>
+      <section id="leftContainer">
+        <img src="success.jpeg" alt="Success Image" />
+      </section>
+      <div id="newUserContainer">
+        <h1> User Created!</h1>
+        <Link to="/" className="link">
+          <h4 id="linkPageChange"> Back to Login </h4>
+        </Link>
+      </div>
     </>
   );
 }

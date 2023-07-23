@@ -5,15 +5,15 @@ const seed = async () => {
     await Users.create({
       username: 'fsmith',
       password: 'password',
-      firstname: 'Franklin',
-      lastname: 'Smith',
+      firstname: 'franklin',
+      lastname: 'smith',
       email: 'fsmith@yahoo.com',
     });
     await Users.create({
       username: 'jsmith',
       password: 'password',
-      firstname: 'John',
-      lastname: 'Smith',
+      firstname: 'john',
+      lastname: 'smith',
       email: 'jsmith@yahoo.com',
     });
     await Messages.create({

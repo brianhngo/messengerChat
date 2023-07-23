@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { getLoginInfo } from '../store/LoginPage';
-import { useDispatch } from 'react-redux';
-import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+
 export default function SignInForm() {
   const dispatch = useDispatch();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-
+  const loginStatus = useSelector((state) => state.login.isLoggedIn);
   const usernameHandler = (event) => {
     setUsername(event.target.value);
   };
@@ -38,7 +38,8 @@ export default function SignInForm() {
           id="username"
           name="username"
           onChange={usernameHandler}
-          value={username}></input>
+          value={username}
+          className={loginStatus === false ? 'highlight' : ''}></input>
         <label htmlFor="password">
           <h4> Password : </h4>
         </label>
@@ -47,7 +48,11 @@ export default function SignInForm() {
           id="password"
           name="password"
           onChange={passwordHandler}
-          value={password}></input>
+          value={password}
+          className={loginStatus === false ? 'highlight' : ''}></input>
+        {loginStatus === false ? (
+          <p className="error-message">Incorrect Login</p>
+        ) : null}
         <button> LOGIN </button>
       </form>
     </section>

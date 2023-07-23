@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
-import { createNewUser, verifyUser, verifyEmail } from '../store/NewUserSlice';
+import {
+  createNewUser,
+  verifyUsernameStatus,
+  verifyEmailStatus,
+} from '../store/NewUserSlice';
 
 export default function CreateNewUser() {
   const dispatch = useDispatch();
@@ -16,8 +20,13 @@ export default function CreateNewUser() {
   const [usernameStatus, setUsernameStatus] = useState(false);
 
   const creationStatus = useSelector((state) => state.newuser.status);
-  const emailList = useSelector((state) => state.newuser.emailList);
-  const usernameList = useSelector((state) => state.newuser.usernameList);
+
+  const verifyEmailStatusState = useSelector(
+    (state) => state.newuser.emailStatusTesting
+  );
+  const verifyUsernameStatusState = useSelector(
+    (state) => state.newuser.usernameStatusTesting
+  );
 
   const userNameHandler = (event) => {
     setUserName(event.target.value);
@@ -49,27 +58,16 @@ export default function CreateNewUser() {
       return;
     }
 
-    const lowercaseUsername = username.toLowerCase();
-    const lowercaseEmail = email.toLowerCase();
+    setUsernameStatus(verifyUsernameStatusState);
+    setEmailStatus(verifyEmailStatusState);
 
-    const isUsernameExists = usernameList.some(
-      (user) => user.username.toLowerCase() === lowercaseUsername
-    );
-
-    const isEmailExists = emailList.some(
-      (user) => user.email.toLowerCase() === lowercaseEmail
-    );
-
-    setUsernameStatus(isUsernameExists);
-    setEmailStatus(isEmailExists);
-
-    if (!isUsernameExists && !isEmailExists) {
+    if (!verifyEmailStatusState && !verifyUsernameStatusState) {
       dispatch(
         createNewUser({
           username: username,
           password: password,
-          firstname: firstName,
-          lastname: lastName,
+          firstname: firstName.toLowerCase(),
+          lastname: lastName.toLocaleLowerCase(),
           email: email,
         })
       );
@@ -79,10 +77,14 @@ export default function CreateNewUser() {
   };
 
   useEffect(() => {
-    dispatch(verifyUser());
+    if (username.trim() !== '') {
+      dispatch(verifyUsernameStatus(username));
+    }
 
-    dispatch(verifyEmail());
-  }, [email, username]);
+    if (email.trim() !== '') {
+      dispatch(verifyEmailStatus(email));
+    }
+  }, [email, username, dispatch]);
 
   useEffect(() => {
     if (creationStatus === true) {
@@ -91,80 +93,86 @@ export default function CreateNewUser() {
   }, [creationStatus, navigate]);
 
   return (
-    <section id="createContainer">
-      <>
-        <h1> Create New User</h1>
-        <p> Please Enter Information to continue </p>
-        <form onSubmit={submitHandler}>
-          <label htmlFor="username">
-            <h4> Username :</h4>
-          </label>
-          <input
-            type="text"
-            id="username"
-            name="username"
-            value={username}
-            onChange={userNameHandler}
-            className={usernameStatus ? 'highlight' : ''}></input>
+    <>
+      <section id="leftContainer">
+        <img src="joinus.png" alt="Join Us" />
+      </section>
+      <section id="createContainer">
+        <>
+          <h1> Create New User</h1>
+          <p> Please Enter Information to continue </p>
+          <form onSubmit={submitHandler}>
+            <label htmlFor="username">
+              <h4> Username :</h4>
+            </label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              value={username}
+              onChange={userNameHandler}
+              className={usernameStatus ? 'highlight' : ''}></input>
 
-          <label htmlFor="password">
-            <h4> Password : </h4>
-          </label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            value={password}
-            onChange={passwordHandler}></input>
+            <label htmlFor="password">
+              <h4> Password : </h4>
+            </label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              value={password}
+              onChange={passwordHandler}></input>
 
-          <label htmlFor="firstname">
-            <h4> First Name : </h4>
-          </label>
-          <input
-            type="text"
-            id="firstname"
-            name="firstname"
-            value={firstName}
-            onChange={firstNameHandler}></input>
+            <label htmlFor="firstname">
+              <h4> First Name : </h4>
+            </label>
+            <input
+              type="text"
+              id="firstname"
+              name="firstname"
+              value={firstName}
+              onChange={firstNameHandler}></input>
 
-          <label htmlFor="lastname">
-            <h4> Last Name : </h4>
-          </label>
-          <input
-            type="lastname"
-            id="lastname"
-            name="lastname"
-            value={lastName}
-            onChange={lastNameHandler}></input>
-          <label htmlFor="email">
-            <h4> Email : </h4>
-          </label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={email}
-            onChange={emailHandler}
-            className={emailStatus ? 'highlight' : ''}></input>
+            <label htmlFor="lastname">
+              <h4> Last Name : </h4>
+            </label>
+            <input
+              type="lastname"
+              id="lastname"
+              name="lastname"
+              value={lastName}
+              onChange={lastNameHandler}></input>
+            <label htmlFor="email">
+              <h4> Email : </h4>
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={email}
+              onChange={emailHandler}
+              className={emailStatus ? 'highlight' : ''}></input>
 
-          {usernameStatus ? (
-            <p className="error-message">
-              Username already exists. Please choose a different one.
-            </p>
-          ) : null}
+            {usernameStatus ? (
+              <p className="error-message">
+                Username already exists. Please choose a different one. Or Text
+                Is Empty
+              </p>
+            ) : null}
 
-          {emailStatus ? (
-            <p className="error-message">
-              email already exists. Please choose a different one.
-            </p>
-          ) : null}
-          <button> Create User! </button>
-        </form>
-        <Link to="/" className="link">
-          {' '}
-          Back to Login{' '}
-        </Link>
-      </>
-    </section>
+            {emailStatus ? (
+              <p className="error-message">
+                email already exists. Please choose a different one. Or Email is
+                Empty
+              </p>
+            ) : null}
+            <button> Create User! </button>
+          </form>
+          <Link to="/" className="link">
+            <h4 id="linkPageChange">Back to Login</h4>
+          </Link>
+        </>
+      </section>
+    </>
   );
 }

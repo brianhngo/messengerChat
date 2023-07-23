@@ -14,26 +14,28 @@ export const createNewUser = createAsyncThunk(
   }
 );
 
-export const verifyUser = createAsyncThunk(
-  'GET api/users/verifyUsername',
-  async () => {
+export const verifyEmailStatus = createAsyncThunk(
+  'PUT api/users/verifyEmail',
+  async (email) => {
     try {
-      const { data } = await axios.get('api/users/verifyUsername');
-
-      return data;
+      const { data } = await axios.put('api/users/verifyEmailStatus', {
+        email,
+      });
+      return data.exists;
     } catch (error) {
       console.error(error);
     }
   }
 );
 
-export const verifyEmail = createAsyncThunk(
-  'GET api/users/verifyEmail',
-  async () => {
+export const verifyUsernameStatus = createAsyncThunk(
+  'PUT api/users/verifyUsername',
+  async (username) => {
     try {
-      const { data } = await axios.get('api/users/verifyEmail');
-
-      return data;
+      const { data } = await axios.put('api/users/verifyUsernameStatus', {
+        username,
+      });
+      return data.exists;
     } catch (error) {
       console.error(error);
     }
@@ -43,10 +45,9 @@ export const verifyEmail = createAsyncThunk(
 const NewUserSlice = createSlice({
   name: 'NewUser',
   initialState: {
-    newUserInfo: [],
-    usernameList: [],
-    emailList: [],
     status: false,
+    emailStatusTesting: null,
+    usernameStatusTesting: null,
   },
   reducers: {
     changeStatus: (state, { payload }) => {
@@ -60,11 +61,11 @@ const NewUserSlice = createSlice({
           state.status = true;
         }
       })
-      .addCase(verifyUser.fulfilled, (state, { payload }) => {
-        state.usernameList = payload;
+      .addCase(verifyEmailStatus.fulfilled, (state, { payload }) => {
+        state.emailStatusTesting = payload;
       })
-      .addCase(verifyEmail.fulfilled, (state, { payload }) => {
-        state.emailList = payload;
+      .addCase(verifyUsernameStatus.fulfilled, (state, { payload }) => {
+        state.usernameStatusTesting = payload;
       });
   },
 });

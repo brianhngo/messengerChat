@@ -41,13 +41,13 @@ const LoginPageSlice = createSlice({
   name: 'LoginPage',
   initialState: {
     info: [],
-    isLoggedIn: false,
+    isLoggedIn: null,
     userInfo: [],
   },
   reducers: {
     changedLoginStatus: (state, { payload }) => {
       window.localStorage.removeItem('token');
-      state.isLoggedIn = false;
+      state.isLoggedIn = null;
     },
   },
   extraReducers: (builder) => {
@@ -56,6 +56,8 @@ const LoginPageSlice = createSlice({
         state.info = payload;
         if (state.info) {
           state.isLoggedIn = true;
+        } else {
+          state.isLoggedIn = false;
         }
       })
       .addCase(attemptTokenLogin.fulfilled, (state, { payload }) => {

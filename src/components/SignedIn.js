@@ -11,6 +11,7 @@ export default function SignedIn() {
 
   const logOutEventHandler = (event) => {
     event.preventDefault();
+
     dispatch(changedLoginStatus());
   };
 

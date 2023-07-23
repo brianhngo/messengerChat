@@ -11,8 +11,10 @@ export default function Modal() {
       <section id="rightContainer">
         <SignInForm />
         <Link to="/create-user" className="link">
-          {' '}
-          <h4> Create New User</h4>
+          <h4 id="linkPageChange"> Create New User</h4>
+        </Link>
+        <Link to="/forget-Password" className="link">
+          <h4 id="linkPageChange"> Forget Password?</h4>
         </Link>
       </section>
     </>
